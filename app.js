@@ -3,7 +3,6 @@ const { pathNotFound, getAllApiTopics } = require("./controllers/controllers");
 const { handleServerErrors } = require("./error");
 
 const app = express();
-app.use(express.json());
 
 app.get("/api/topics", getAllApiTopics);
 
