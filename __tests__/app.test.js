@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
+const endpointsData = require("../endpoints.json");
 
 afterAll(() => {
   db.end();
@@ -18,38 +19,65 @@ describe("GET /api/topics", () => {
       .then(({ body: { topics } }) => {
         expect(topics.length).toBe(3);
         topics.forEach((topic) => {
-          expect(topic).toHaveProperty("slug", expect.any(String))
-          expect(topic).toHaveProperty("description", expect.any(String))
-            });
+          expect(topic).toHaveProperty("slug", expect.any(String));
+          expect(topic).toHaveProperty("description", expect.any(String));
         });
       });
-  test("400: responds with path not found when passed an incorrect path",
-    () => {
-      return request(app)
-        .get("/api/topic")
-        .expect(400)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("path not found");
-        });
-    });
+  });
+  test("400: responds with path not found when passed an incorrect path", () => {
+    return request(app)
+      .get("/api/topic")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("path not found");
+      });
+  });
 });
 
 describe("GET /api", () => {
-    test("200: responds with an object describing all the available endpoints", () => {
-        return request(app)
-        .get("/api")
-        .expect(200)
-        .then(({body:{endpoints}})=>{
-            expect(endpoints).toHaveProperty("GET /api")
-            expect(endpoints["GET /api"]).toHaveProperty("description")
-            expect(endpoints["GET /api"]).toHaveProperty("queries")
-            expect(endpoints["GET /api"]).toHaveProperty("request body")
-            expect(endpoints["GET /api"]).toHaveProperty("exampleResponse")
-            expect(endpoints).toHaveProperty('GET /api/topics')
-            expect(endpoints["GET /api/topics"]).toHaveProperty("description")
-            expect(endpoints["GET /api/topics"]).toHaveProperty("queries")
-            expect(endpoints["GET /api/topics"]).toHaveProperty("request body")
-            expect(endpoints["GET /api/topics"]).toHaveProperty("exampleResponse")
-        })
-    });
+  test("200: responds with an object describing all the available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toEqual(endpointsData);
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  test("200: responds with an articles choosen by id", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles[0]).toHaveProperty("author", expect.any(String));
+        expect(articles[0]).toHaveProperty("title", expect.any(String));
+        expect(articles[0]).toHaveProperty("article_id", expect.any(Number));
+        expect(articles[0]).toHaveProperty("body", expect.any(String));
+        expect(articles[0]).toHaveProperty("topic", expect.any(String));
+        expect(articles[0]).toHaveProperty("created_at", expect.any(String));
+        expect(articles[0]).toHaveProperty("votes", expect.any(Number));
+        expect(articles[0]).toHaveProperty(
+          "article_img_url",
+          expect.any(String)
+        );
+      });
+  });
+  test("400: responds with bad request with passed a string as id", () => {
+    return request(app)
+      .get("/api/articles/two")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("400: responds with bad request with passed a nonexistent number id", () => {
+    return request(app)
+      .get("/api/articles/100")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
 });
