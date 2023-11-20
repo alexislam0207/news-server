@@ -18,8 +18,8 @@ describe("GET /api/topics", () => {
       .then(({ body: { topics } }) => {
         expect(topics.length).toBe(3);
         topics.forEach((topic) => {
-          expect(topic).toHaveProperty('slug', expect.any(String))
-          expect(topic).toHaveProperty('description', expect.any(String))
+          expect(topic).toHaveProperty("slug", expect.any(String))
+          expect(topic).toHaveProperty("description", expect.any(String))
             });
         });
       });
@@ -31,5 +31,25 @@ describe("GET /api/topics", () => {
         .then(({ body: { msg } }) => {
           expect(msg).toBe("path not found");
         });
+    });
+});
+
+describe("GET /api", () => {
+    test("200: responds with an object describing all the available endpoints", () => {
+        return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({body:{endpoints}})=>{
+            expect(endpoints).toHaveProperty("GET /api")
+            expect(endpoints["GET /api"]).toHaveProperty("description")
+            expect(endpoints["GET /api"]).toHaveProperty("queries")
+            expect(endpoints["GET /api"]).toHaveProperty("request body")
+            expect(endpoints["GET /api"]).toHaveProperty("exampleResponse")
+            expect(endpoints).toHaveProperty('GET /api/topics')
+            expect(endpoints["GET /api/topics"]).toHaveProperty("description")
+            expect(endpoints["GET /api/topics"]).toHaveProperty("queries")
+            expect(endpoints["GET /api/topics"]).toHaveProperty("request body")
+            expect(endpoints["GET /api/topics"]).toHaveProperty("exampleResponse")
+        })
     });
 });
