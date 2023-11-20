@@ -1,10 +1,15 @@
 const express = require("express");
-const { pathNotFound, getAllApiTopics } = require("./controllers/controllers");
+const {
+  pathNotFound,
+  getAllApiTopics,
+  getAllApiEndpoints,
+} = require("./controllers/controllers");
 const { handleServerErrors } = require("./error");
 
 const app = express();
 
 app.get("/api/topics", getAllApiTopics);
+app.get("/api", getAllApiEndpoints);
 
 app.all("*", pathNotFound);
 
