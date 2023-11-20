@@ -18,13 +18,11 @@ describe("GET /api/topics", () => {
       .then(({ body: { topics } }) => {
         expect(topics.length).toBe(3);
         topics.forEach((topic) => {
-          expect(topic).toMatchObject({
-            slug: expect.any(String),
-            description: expect.any(String),
-          });
+          expect(topic).toHaveProperty('slug', expect.any(String))
+          expect(topic).toHaveProperty('description', expect.any(String))
+            });
         });
       });
-  });
   test("400: responds with path not found when passed an incorrect path",
     () => {
       return request(app)
