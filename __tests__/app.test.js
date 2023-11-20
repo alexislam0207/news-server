@@ -24,10 +24,10 @@ describe("GET /api/topics", () => {
         });
       });
   });
-  test("400: responds with path not found when passed an incorrect path", () => {
+  test("404: responds with path not found when passed an incorrect path", () => {
     return request(app)
       .get("/api/topic")
-      .expect(400)
+      .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("path not found");
       });
@@ -72,12 +72,12 @@ describe("GET /api/articles/:article_id", () => {
         expect(msg).toBe("bad request");
       });
   });
-  test("400: responds with bad request with passed a nonexistent number id", () => {
+  test("404: responds with bad request with passed a nonexistent number id", () => {
     return request(app)
       .get("/api/articles/100")
-      .expect(400)
+      .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("bad request");
+        expect(msg).toBe("not found");
       });
   });
 });

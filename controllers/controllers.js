@@ -5,7 +5,7 @@ const {
 } = require("../models/models");
 
 exports.pathNotFound = (req, res) => {
-  res.status(400).send({ msg: "path not found" });
+  res.status(404).send({ msg: "path not found" });
 };
 
 exports.getAllApiTopics = (req, res, next) => {
