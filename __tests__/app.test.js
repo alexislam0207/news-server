@@ -158,6 +158,66 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("POST /api/articles/:article_id/comments", () => {
+    const newComment = {
+        username: "rogersop",
+        body: "Nice article"
+    }
+    test("201: responds with the posted comment", () => {
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({body:{comment}})=>{
+            expect(comment).toHaveProperty("comment_id", 19)
+            expect(comment).toHaveProperty("body", newComment.body)
+            expect(comment).toHaveProperty("article_id", 2)
+            expect(comment).toHaveProperty("author", newComment.username)
+            expect(comment).toHaveProperty("votes", 0)
+            expect(comment).toHaveProperty("created_at", expect.any(String))
+        })
+    });
+    test("400: responds with bad request with passed a string as id", () => {
+        return request(app)
+          .post("/api/articles/two/comments")
+          .send(newComment)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("bad request");
+          });
+      });
+      test("400: responds with bad request with passed an invalid new comment", () => {
+        const invalidComment = {body: "Nice article"}
+        return request(app)
+          .post("/api/articles/2/comments")
+          .send(invalidComment)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("bad request");
+          });
+      });
+      test("404: responds with not found with passed an id that does not exist", () => {
+        return request(app)
+          .post("/api/articles/100/comments")
+          .send(newComment)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("not found");
+          });
+      });
+      test("404: responds with not found with post with a username that does not exist", () => {
+        return request(app)
+          .post("/api/articles/2/comments")
+          .send({
+            username: "alexis",
+            body: "Nice article"
+        })
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("not found");
+          });
+      });
+});
 describe("PATCH /api/articles/:article_id", () => {
     const updateVote = {inc_votes : 1}
     test("201: responds with an array of the updated article", () => {

@@ -6,6 +6,7 @@ const {
   getApiArticles,
   getAllApiArticles,
   getApiCommentsByArticleId,
+  insertApiComment,
   updateApiArticle,
 } = require("./controllers/controllers");
 const {
@@ -22,7 +23,9 @@ app.get("/api/topics", getAllApiTopics);
 app.get("/api", getAllApiEndpoints);
 app.get("/api/articles/:article_id", getApiArticles);
 app.get("/api/articles", getAllApiArticles);
-app.get("/api/articles/:article_id/comments", getApiCommentsByArticleId);
+app.get("/api/articles/:article_id/comments",getApiCommentsByArticleId)
+
+app.post("/api/articles/:article_id/comments", insertApiComment);
 
 app.patch("/api/articles/:article_id", updateApiArticle);
 
