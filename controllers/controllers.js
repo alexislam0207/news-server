@@ -7,6 +7,7 @@ const {
   checkIfArticleIdExist,
   insertComment,
   updateArticle,
+  getAllUsers,
 } = require("../models/models");
 
 exports.pathNotFound = (req, res) => {
@@ -81,3 +82,10 @@ exports.updateApiArticle = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getAllApiUsers = (req, res, next)=>{
+    getAllUsers()
+    .then((users)=>{
+        res.status(200).send({users})
+    })
+}
