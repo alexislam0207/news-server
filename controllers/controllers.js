@@ -67,8 +67,6 @@ exports.insertApiComment = (req, res, next) => {
   .catch(next);
 };
 
-
-
 exports.updateApiArticle = (req, res, next) => {
   const { article_id } = req.params;
   const updateVote = req.body;
