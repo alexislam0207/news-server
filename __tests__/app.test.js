@@ -196,13 +196,13 @@ describe("POST /api/articles/:article_id/comments", () => {
             expect(msg).toBe("bad request");
           });
       });
-    //   test.only("404: responds with not found with passed an id that does not exist", () => {
-    //     return request(app)
-    //       .post("/api/articles/100/comments")
-    //       .send(newComment)
-    //       .expect(404)
-    //       .then(({ body: { msg } }) => {
-    //         expect(msg).toBe("not found");
-    //       });
-    //   });
+      test("404: responds with not found with passed an id that does not exist", () => {
+        return request(app)
+          .post("/api/articles/100/comments")
+          .send(newComment)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("not found");
+          });
+      });
 });

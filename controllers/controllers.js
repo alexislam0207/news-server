@@ -41,17 +41,6 @@ exports.getAllApiArticles = (req, res, next) => {
     .catch(next);
 };
 
-
-
-exports.insertApiComment = (req, res, next) => {
-  const { article_id } = req.params;
-  const newComment = req.body;
-  insertComment(article_id, newComment).then((comment) => {
-    res.status(201).send({ comment });
-  })
-  .catch(next);
-};
-
 exports.getApiCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const promises = [getCommentsByArticeId(article_id)];
@@ -66,3 +55,15 @@ exports.getApiCommentsByArticleId = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.insertApiComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const newComment = req.body;
+  
+  insertComment(article_id, newComment).then((comment) => {
+    res.status(201).send({ comment });
+  })
+  .catch(next);
+};
+
+
