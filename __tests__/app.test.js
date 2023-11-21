@@ -114,3 +114,52 @@ describe("GET /api/articles", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+    const newComment = {
+        username: "rogersop",
+        body: "Nice article"
+    }
+    test("201: responds with the posted comment", () => {
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({body:{comment}})=>{
+            expect(comment[0]).toHaveProperty("comment_id", 19)
+            expect(comment[0]).toHaveProperty("body", newComment.body)
+            expect(comment[0]).toHaveProperty("article_id", 2)
+            expect(comment[0]).toHaveProperty("author", newComment.username)
+            expect(comment[0]).toHaveProperty("votes", 0)
+            expect(comment[0]).toHaveProperty("created_at", expect.any(String))
+        })
+    });
+    test("400: responds with bad request with passed a string as id", () => {
+        return request(app)
+          .post("/api/articles/two/comments")
+          .send(newComment)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("bad request");
+          });
+      });
+      test("400: responds with bad request with passed an invalid new comment", () => {
+        const invalidComment = {body: "Nice article"}
+        return request(app)
+          .post("/api/articles/2/comments")
+          .send(invalidComment)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("bad request");
+          });
+      });
+    //   test.only("404: responds with not found with passed an id that does not exist", () => {
+    //     return request(app)
+    //       .post("/api/articles/100/comments")
+    //       .send(newComment)
+    //       .expect(404)
+    //       .then(({ body: { msg } }) => {
+    //         expect(msg).toBe("not found");
+    //       });
+    //   });
+});

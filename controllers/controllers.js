@@ -3,6 +3,7 @@ const {
   getAllEndpoints,
   getArticles,
   getAllArticles,
+  insertComment,
 } = require("../models/models");
 
 exports.pathNotFound = (req, res) => {
@@ -36,4 +37,13 @@ exports.getAllApiArticles = (req, res, next) => {
       res.status(200).send({ articles });
     })
     .catch(next);
+};
+
+exports.insertApiComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const newComment = req.body;
+  insertComment(article_id, newComment).then((comment) => {
+    res.status(201).send({ comment });
+  })
+  .catch(next);
 };
