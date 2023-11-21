@@ -2,6 +2,7 @@ const {
   getAllTopics,
   getAllEndpoints,
   getArticles,
+  getAllArticles,
 } = require("../models/models");
 
 exports.pathNotFound = (req, res) => {
@@ -22,8 +23,17 @@ exports.getAllApiEndpoints = (req, res, next) => {
 
 exports.getApiArticles = (req, res, next) => {
   const { article_id } = req.params;
-  getArticles(article_id).then((articles) => {
-    res.status(200).send({ articles });
-  })
-  .catch(next);
+  getArticles(article_id)
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.getAllApiArticles = (req, res, next) => {
+  getAllArticles()
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
 };
