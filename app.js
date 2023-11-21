@@ -8,6 +8,7 @@ const {
   getApiCommentsByArticleId,
   insertApiComment,
   updateApiArticle,
+  deleteApiComment,
   getAllApiUsers,
 } = require("./controllers/controllers");
 const {
@@ -30,6 +31,8 @@ app.get("/api/users", getAllApiUsers);
 app.post("/api/articles/:article_id/comments", insertApiComment);
 
 app.patch("/api/articles/:article_id", updateApiArticle);
+
+app.delete("/api/comments/:comment_id", deleteApiComment);
 
 app.all("*", pathNotFound);
 

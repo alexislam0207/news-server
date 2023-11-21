@@ -117,13 +117,30 @@ exports.updateArticle = (article_id, updateVote) => {
     });
 };
 
-exports.getAllUsers = () => {
+exports.deleteComment = (comment_id) => {
   return db
     .query(
       `
-    SELECT * FROM users`
+    DELETE FROM comments
+    WHERE comment_id = $1
+    RETURNING *`,
+      [comment_id]
     )
     .then(({ rows }) => {
-      return rows;
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
     });
 };
+
+exports.getAllUsers = () => {
+    return db
+      .query(
+        `
+      SELECT * FROM users`
+      )
+      .then(({ rows }) => {
+        return rows;
+      });
+  };
+  

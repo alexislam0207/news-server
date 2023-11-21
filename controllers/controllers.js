@@ -7,6 +7,7 @@ const {
   checkIfArticleIdExist,
   insertComment,
   updateArticle,
+  deleteComment,
   getAllUsers,
 } = require("../models/models");
 
@@ -61,11 +62,12 @@ exports.getApiCommentsByArticleId = (req, res, next) => {
 exports.insertApiComment = (req, res, next) => {
   const { article_id } = req.params;
   const newComment = req.body;
-  
-  insertComment(article_id, newComment).then((comment) => {
-    res.status(201).send({ comment });
-  })
-  .catch(next);
+
+  insertComment(article_id, newComment)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
 };
 
 exports.updateApiArticle = (req, res, next) => {
@@ -81,6 +83,24 @@ exports.updateApiArticle = (req, res, next) => {
       res.status(201).send({ article: reslovedPromises[0] });
     })
     .catch(next);
+};
+
+exports.deleteApiComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  deleteComment(comment_id)
+  .then(() => {
+    res.status(204).send();
+  })
+  .catch(next);
+};
+
+exports.deleteApiComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  deleteComment(comment_id)
+  .then(() => {
+    res.status(204).send();
+  })
+  .catch(next);
 };
 
 exports.getAllApiUsers = (req, res, next)=>{
