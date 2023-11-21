@@ -26,8 +26,8 @@ exports.getAllApiEndpoints = (req, res, next) => {
 exports.getApiArticles = (req, res, next) => {
   const { article_id } = req.params;
   getArticles(article_id)
-    .then((articles) => {
-      res.status(200).send({ articles });
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };

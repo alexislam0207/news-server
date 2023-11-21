@@ -50,15 +50,15 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/2")
       .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles[0]).toHaveProperty("author", expect.any(String));
-        expect(articles[0]).toHaveProperty("title", expect.any(String));
-        expect(articles[0]).toHaveProperty("article_id", expect.any(Number));
-        expect(articles[0]).toHaveProperty("body", expect.any(String));
-        expect(articles[0]).toHaveProperty("topic", expect.any(String));
-        expect(articles[0]).toHaveProperty("created_at", expect.any(String));
-        expect(articles[0]).toHaveProperty("votes", expect.any(Number));
-        expect(articles[0]).toHaveProperty(
+      .then(({ body: { article } }) => {
+        expect(article[0]).toHaveProperty("author", expect.any(String));
+        expect(article[0]).toHaveProperty("title", expect.any(String));
+        expect(article[0]).toHaveProperty("article_id", expect.any(Number));
+        expect(article[0]).toHaveProperty("body", expect.any(String));
+        expect(article[0]).toHaveProperty("topic", expect.any(String));
+        expect(article[0]).toHaveProperty("created_at", expect.any(String));
+        expect(article[0]).toHaveProperty("votes", expect.any(Number));
+        expect(article[0]).toHaveProperty(
           "article_img_url",
           expect.any(String)
         );
