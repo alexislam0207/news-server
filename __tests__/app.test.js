@@ -105,4 +105,12 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("404: responds with path not found when passed an incorrect path", () => {
+    return request(app)
+      .get("/api/article")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("path not found");
+      });
+  });
 });
