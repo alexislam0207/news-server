@@ -3,6 +3,7 @@ const {
   getAllEndpoints,
   getArticles,
   getCommentsByArticeId,
+  checkIfArticleIdExist,
 } = require("../models/models");
 
 exports.pathNotFound = (req, res) => {
@@ -23,17 +24,24 @@ exports.getAllApiEndpoints = (req, res, next) => {
 
 exports.getApiArticles = (req, res, next) => {
   const { article_id } = req.params;
-  getArticles(article_id).then((articles) => {
-    res.status(200).send({ articles });
-  })
-  .catch(next);
+  getArticles(article_id)
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
 };
 
 exports.getApiCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-  getCommentsByArticeId(article_id)
-    .then((comments) => {
-      res.status(200).send({ comments });
+  const promises = [getCommentsByArticeId(article_id)];
+
+  if (article_id) {
+    promises.push(checkIfArticleIdExist(article_id));
+  }
+
+  Promise.all(promises)
+    .then((reslovedPromises) => {
+      res.status(200).send({ comments: reslovedPromises[0] });
     })
     .catch(next);
 };
