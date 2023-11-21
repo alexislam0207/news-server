@@ -5,6 +5,7 @@ const {
   getAllApiEndpoints,
   getApiArticles,
   getAllApiArticles,
+  getApiCommentsByArticleId,
 } = require("./controllers/controllers");
 const {
   handleServerErrors,
@@ -18,6 +19,7 @@ app.get("/api/topics", getAllApiTopics);
 app.get("/api", getAllApiEndpoints);
 app.get("/api/articles/:article_id", getApiArticles);
 app.get("/api/articles", getAllApiArticles);
+app.get("/api/articles/:article_id/comments",getApiCommentsByArticleId)
 
 app.all("*", pathNotFound);
 
