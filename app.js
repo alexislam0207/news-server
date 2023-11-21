@@ -9,6 +9,7 @@ const {
   insertApiComment,
   updateApiArticle,
   deleteApiComment,
+  getAllApiUsers,
 } = require("./controllers/controllers");
 const {
   handleServerErrors,
@@ -25,6 +26,7 @@ app.get("/api", getAllApiEndpoints);
 app.get("/api/articles/:article_id", getApiArticles);
 app.get("/api/articles", getAllApiArticles);
 app.get("/api/articles/:article_id/comments",getApiCommentsByArticleId)
+app.get("/api/users", getAllApiUsers);
 
 app.post("/api/articles/:article_id/comments", insertApiComment);
 
