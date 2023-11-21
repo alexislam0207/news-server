@@ -8,6 +8,7 @@ const {
   getApiCommentsByArticleId,
   insertApiComment,
   updateApiArticle,
+  deleteApiComment,
 } = require("./controllers/controllers");
 const {
   handleServerErrors,
@@ -28,6 +29,8 @@ app.get("/api/articles/:article_id/comments",getApiCommentsByArticleId)
 app.post("/api/articles/:article_id/comments", insertApiComment);
 
 app.patch("/api/articles/:article_id", updateApiArticle);
+
+app.delete("/api/comments/:comment_id", deleteApiComment);
 
 app.all("*", pathNotFound);
 
