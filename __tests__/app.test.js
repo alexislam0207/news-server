@@ -218,3 +218,48 @@ describe("POST /api/articles/:article_id/comments", () => {
           });
       });
 });
+describe("PATCH /api/articles/:article_id", () => {
+    const updateVote = {inc_votes : 1}
+    test("201: responds with an array of the updated article", () => {
+        return request(app)
+        .patch("/api/articles/3")
+        .send(updateVote)
+        .expect(201)
+        .then(({body:{article}})=>{
+            expect(article).toHaveProperty("article_id", 3)
+            expect(article).toHaveProperty("title", expect.any(String))
+            expect(article).toHaveProperty("topic", expect.any(String))
+            expect(article).toHaveProperty("author", expect.any(String))
+            expect(article).toHaveProperty("body", expect.any(String))
+            expect(article).toHaveProperty("votes", expect.any(Number))
+            expect(article).toHaveProperty("article_img_url", expect.any(String))
+        })
+    });
+    test("400: responds with bad request with passed a string as id", () => {
+        return request(app)
+          .patch("/api/articles/three")
+          .send(updateVote)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("bad request");
+          });
+      });
+      test("404: responds with not found with passed an id that does not exist", () => {
+        return request(app)
+          .patch("/api/articles/88")
+          .send(updateVote)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("not found");
+          });
+      });
+      test("400: responds with bad request with passed an invalid request body", () => {
+        return request(app)
+          .patch("/api/articles/3")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("bad request");
+          });
+      });
+});

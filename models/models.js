@@ -1,4 +1,3 @@
-const { log } = require("console");
 const db = require("../db/connection");
 const fs = require("fs/promises");
 
@@ -87,3 +86,31 @@ exports.insertComment = (article_id, newComment) => {
       return rows[0];
     });
 };
+
+exports.insertComment = (article_id, newComment) => {
+  const { username, body } = newComment;
+  return db
+    .query(
+      `
+    INSERT INTO comments(body, article_id, author)
+    VALUES ($1, $2, $3)
+    RETURNING *`,
+      [body, article_id, username]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+exports.updateArticle = (article_id, updateVote)=>{
+    return db
+    .query(`
+    UPDATE articles
+    SET votes = votes + $1
+    WHERE article_id = $2
+    RETURNING *`,
+    [updateVote.inc_votes, article_id])
+    .then(({rows})=>{
+        return rows[0]
+    })
+}

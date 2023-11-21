@@ -6,6 +6,7 @@ const {
   getCommentsByArticeId,
   checkIfArticleIdExist,
   insertComment,
+  updateArticle,
 } = require("../models/models");
 
 exports.pathNotFound = (req, res) => {
@@ -66,4 +67,17 @@ exports.insertApiComment = (req, res, next) => {
   .catch(next);
 };
 
+exports.updateApiArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const updateVote = req.body;
+  const promises = [
+    updateArticle(article_id, updateVote),
+    checkIfArticleIdExist(article_id),
+  ];
 
+  Promise.all(promises)
+    .then((reslovedPromises) => {
+      res.status(201).send({ article: reslovedPromises[0] });
+    })
+    .catch(next);
+};
