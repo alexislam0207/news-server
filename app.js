@@ -6,6 +6,7 @@ const {
   getApiArticles,
   getAllApiArticles,
   getApiCommentsByArticleId,
+  updateApiArticle,
 } = require("./controllers/controllers");
 const {
   handleServerErrors,
@@ -15,11 +16,15 @@ const {
 
 const app = express();
 
+app.use(express.json());
+
 app.get("/api/topics", getAllApiTopics);
 app.get("/api", getAllApiEndpoints);
 app.get("/api/articles/:article_id", getApiArticles);
 app.get("/api/articles", getAllApiArticles);
-app.get("/api/articles/:article_id/comments",getApiCommentsByArticleId)
+app.get("/api/articles/:article_id/comments", getApiCommentsByArticleId);
+
+app.patch("/api/articles/:article_id", updateApiArticle);
 
 app.all("*", pathNotFound);
 
