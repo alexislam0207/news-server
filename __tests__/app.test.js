@@ -169,12 +169,12 @@ describe("POST /api/articles/:article_id/comments", () => {
         .send(newComment)
         .expect(201)
         .then(({body:{comment}})=>{
-            expect(comment[0]).toHaveProperty("comment_id", 19)
-            expect(comment[0]).toHaveProperty("body", newComment.body)
-            expect(comment[0]).toHaveProperty("article_id", 2)
-            expect(comment[0]).toHaveProperty("author", newComment.username)
-            expect(comment[0]).toHaveProperty("votes", 0)
-            expect(comment[0]).toHaveProperty("created_at", expect.any(String))
+            expect(comment).toHaveProperty("comment_id", 19)
+            expect(comment).toHaveProperty("body", newComment.body)
+            expect(comment).toHaveProperty("article_id", 2)
+            expect(comment).toHaveProperty("author", newComment.username)
+            expect(comment).toHaveProperty("votes", 0)
+            expect(comment).toHaveProperty("created_at", expect.any(String))
         })
     });
     test("400: responds with bad request with passed a string as id", () => {
@@ -200,6 +200,18 @@ describe("POST /api/articles/:article_id/comments", () => {
         return request(app)
           .post("/api/articles/100/comments")
           .send(newComment)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("not found");
+          });
+      });
+      test("404: responds with not found with post with a username that does not exist", () => {
+        return request(app)
+          .post("/api/articles/2/comments")
+          .send({
+            username: "alexis",
+            body: "Nice article"
+        })
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("not found");

@@ -84,6 +84,6 @@ exports.insertComment = (article_id, newComment) => {
       [body, article_id, username]
     )
     .then(({ rows }) => {
-      return rows;
+      return rows[0];
     });
 };
