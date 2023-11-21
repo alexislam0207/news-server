@@ -3,6 +3,8 @@ const {
   getAllEndpoints,
   getArticles,
   getAllArticles,
+  getCommentsByArticeId,
+  checkIfArticleIdExist,
   insertComment,
 } = require("../models/models");
 
@@ -25,8 +27,8 @@ exports.getAllApiEndpoints = (req, res, next) => {
 exports.getApiArticles = (req, res, next) => {
   const { article_id } = req.params;
   getArticles(article_id)
-    .then((articles) => {
-      res.status(200).send({ articles });
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };
@@ -39,6 +41,8 @@ exports.getAllApiArticles = (req, res, next) => {
     .catch(next);
 };
 
+
+
 exports.insertApiComment = (req, res, next) => {
   const { article_id } = req.params;
   const newComment = req.body;
@@ -46,4 +50,19 @@ exports.insertApiComment = (req, res, next) => {
     res.status(201).send({ comment });
   })
   .catch(next);
+};
+
+exports.getApiCommentsByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const promises = [getCommentsByArticeId(article_id)];
+
+  if (article_id) {
+    promises.push(checkIfArticleIdExist(article_id));
+  }
+
+  Promise.all(promises)
+    .then((reslovedPromises) => {
+      res.status(200).send({ comments: reslovedPromises[0] });
+    })
+    .catch(next);
 };
