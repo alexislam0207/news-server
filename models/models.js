@@ -134,13 +134,12 @@ exports.deleteComment = (comment_id) => {
 };
 
 exports.getAllUsers = () => {
-    return db
-      .query(
-        `
+  return db
+    .query(
+      `
       SELECT * FROM users`
-      )
-      .then(({ rows }) => {
-        return rows;
-      });
-  };
-  
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
