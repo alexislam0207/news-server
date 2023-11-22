@@ -58,10 +58,42 @@ describe("GET /api/articles/:article_id", () => {
         expect(article).toHaveProperty("topic", expect.any(String));
         expect(article).toHaveProperty("created_at", expect.any(String));
         expect(article).toHaveProperty("votes", expect.any(Number));
-        expect(article).toHaveProperty(
-          "article_img_url",
-          expect.any(String)
-        );
+        expect(article).toHaveProperty("article_img_url", expect.any(String));
+      });
+  });
+  test("400: responds with bad request with passed a string as id", () => {
+    return request(app)
+      .get("/api/articles/two")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("404: responds with not found with passed a nonexistent number id", () => {
+    return request(app)
+      .get("/api/articles/100")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id (now updated to include comment_count)", () => {
+  test("200: responds with an articles choosen by id", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toHaveProperty("author", expect.any(String));
+        expect(article).toHaveProperty("title", expect.any(String));
+        expect(article).toHaveProperty("article_id", 2);
+        expect(article).toHaveProperty("body", expect.any(String));
+        expect(article).toHaveProperty("topic", expect.any(String));
+        expect(article).toHaveProperty("created_at", expect.any(String));
+        expect(article).toHaveProperty("votes", expect.any(Number));
+        expect(article).toHaveProperty("article_img_url", expect.any(String));
+        expect(article).toHaveProperty("comment_count", expect.any(String));
       });
   });
   test("400: responds with bad request with passed a string as id", () => {
