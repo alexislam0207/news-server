@@ -58,10 +58,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(article).toHaveProperty("topic", expect.any(String));
         expect(article).toHaveProperty("created_at", expect.any(String));
         expect(article).toHaveProperty("votes", expect.any(Number));
-        expect(article).toHaveProperty(
-          "article_img_url",
-          expect.any(String)
-        );
+        expect(article).toHaveProperty("article_img_url", expect.any(String));
       });
   });
   test("400: responds with bad request with passed a string as id", () => {
@@ -133,19 +130,19 @@ describe("GET /api/articles (topic query)", () => {
   });
   test("404: respond with not found when passed a topic that does not exist", () => {
     return request(app)
-        .get("/api/articles?topic=dogs")
-        .expect(404)
-        .then(({body:{msg}})=>{
-            expect(msg).toBe("not found")
-        });
+      .get("/api/articles?topic=dogs")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
   });
   test("400: respond with bad request when passed a number as topic", () => {
     return request(app)
-        .get("/api/articles?topic=2")
-        .expect(400)
-        .then(({body:{msg}})=>{
-            expect(msg).toBe("bad request")
-        });
+      .get("/api/articles?topic=2")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
   });
 });
 
@@ -212,6 +209,27 @@ describe("GET /api/users", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("path not found");
+      });
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  test("200: responds with a user choosen by username", () => {
+    return request(app)
+      .get("/api/users/icellusedkars")
+      .expect(200)
+      .then(({ body: { user } }) => {
+        expect(user).toHaveProperty("username", expect.any(String));
+        expect(user).toHaveProperty("name", expect.any(String));
+        expect(user).toHaveProperty("avatar_url", expect.any(String));
+      });
+  });
+  test("404: responds with not found with passed a nonexistent username", () => {
+    return request(app)
+      .get("/api/users/abc2")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
       });
   });
 });
