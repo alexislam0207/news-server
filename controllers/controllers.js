@@ -37,8 +37,8 @@ exports.getApiArticles = (req, res, next) => {
 };
 
 exports.getAllApiArticles = (req, res, next) => {
-  const { topic } = req.query;
-  getAllArticles(topic)
+  const { topic , sort_by, order} = req.query;
+  getAllArticles(topic, sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
     })
