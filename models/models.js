@@ -29,19 +29,30 @@ exports.getArticles = (article_id) => {
     });
 };
 
-exports.getAllArticles = () => {
-  return db
-    .query(
-      `
-    SELECT a.title, a.author, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, COUNT(c.comment_id) AS comment_count 
+exports.getAllArticles = (topic) => {
+  let queryStr = `SELECT a.title, a.author, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, COUNT(c.comment_id) AS comment_count 
     FROM articles AS a LEFT JOIN comments AS c 
-    ON a.article_id=c.article_id 
-    GROUP BY a.article_id
-    ORDER BY a.created_at DESC;`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+    ON a.article_id=c.article_id `;
+
+  const queryValues = [];
+
+  if (topic) {
+    queryStr += `WHERE topic = $1 `;
+    queryValues.push(topic);
+  }
+
+  queryStr += `GROUP BY a.article_id
+    ORDER BY a.created_at DESC;`;
+
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    if(parseInt(topic) && !rows.length){
+        return Promise.reject({ status: 400, msg: "bad request" })
+    }
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    }
+    return rows;
+  });
 };
 
 exports.getCommentsByArticeId = (article_id) => {

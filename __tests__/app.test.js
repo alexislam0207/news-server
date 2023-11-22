@@ -112,6 +112,43 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe("GET /api/articles (topic query)", () => {
+  test("200: responds with articles filtered by specific topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(12);
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("article_id", expect.any(Number));
+          expect(article).toHaveProperty("comment_count", expect.any(String));
+          expect(article).toHaveProperty("topic", "mitch");
+          expect(article).toHaveProperty("created_at", expect.any(String));
+          expect(article).toHaveProperty("votes", expect.any(Number));
+          expect(article).toHaveProperty("article_img_url", expect.any(String));
+        });
+      });
+  });
+  test("404: respond with not found when passed a topic that does not exist", () => {
+    return request(app)
+        .get("/api/articles?topic=dogs")
+        .expect(404)
+        .then(({body:{msg}})=>{
+            expect(msg).toBe("not found")
+        });
+  });
+  test("400: respond with bad request when passed a number as topic", () => {
+    return request(app)
+        .get("/api/articles?topic=2")
+        .expect(400)
+        .then(({body:{msg}})=>{
+            expect(msg).toBe("bad request")
+        });
+  });
+});
+
 describe("GET /api/articles/:article_id/comments", () => {
   test("200: responds with an array of comments for the given article_id", () => {
     return request(app)
