@@ -25,7 +25,7 @@ exports.getArticles = (article_id) => {
       if (!rows.length) {
         return Promise.reject({ status: 404, msg: "not found" });
       }
-      return rows;
+      return rows[0];
     });
 };
 
