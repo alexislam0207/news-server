@@ -1,6 +1,6 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api",
+    "description": "serves a json representation of all the available endpoints of the api",
     "queries": [],
     "request body": "N/A",
     "exampleResponse": {
@@ -26,41 +26,39 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["topic", "sort_by", "order"],
     "request body": "N/A",
     "exampleResponse": {
       "articles": [
         {
+          "author": "weegembump",
+          "title": "Seafood substitutions are increasing",
           "article_id": 3,
-          "title": "Seafood substitutions are increasing",
           "topic": "cooking",
-          "author": "weegembump",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-        }
-      ]
-    }
-  },
-  "GET /api/articles/:article_id": {
-    "description": "serves an array of one article choosen by it's id",
-    "queries": [],
-    "request body": "N/A",
-    "exampleResponse": {
-      "article": [
-        {
-          "article_id": 99,
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           "comment_count": 6
         }
       ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an article choosen by id",
+    "queries": [],
+    "request body": "N/A",
+    "exampleResponse": {
+      "article":  {
+          "author": "weegembump",
+          "title": "Seafood substitutions are increasing",
+          "article_id": 99,
+          "body": "Text from the article..",
+          "topic": "cooking",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "comment_count": 6
+        }
     }
   },
   "GET /api/articles/:article_id/comments": {
@@ -71,8 +69,8 @@
       "comments": [
         {
           "comment_id": 6,
-          "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
+          "created_at": "2018-05-30T15:59:13.341Z",
           "author": "weegembump",
           "body": "Text from the comment..",
           "article_id": 5
@@ -94,16 +92,27 @@
       ]
     }
   },
+  "GET /api/users/:username": {
+    "description": "serves a user choosen by username",
+    "queries": [],
+    "request body": "N/A",
+    "exampleResponse": {
+      "user": {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+    }
+  },
   "POST /api/articles/:article_id/comments": {
-    "description": "serves an array of the posted comment",
+    "description": "serves the posted comment",
     "queries": [],
     "request body": {
       "username": "abc",
       "body": "context"
     },
     "exampleResponse": {
-      "comment": [
-        {
+      "comment": {
           "comment_id": 60,
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
@@ -111,7 +120,6 @@
           "body": "context",
           "article_id": 5
         }
-      ]
     }
   },
   "PATCH /api/articles/:article_id": {
@@ -121,8 +129,7 @@
       "inc_votes": "newVote(any number to add or subtract to current votes)"
     },
     "exampleResponse": {
-      "article": [
-        {
+      "article": {
           "article_id": 99,
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
@@ -132,7 +139,6 @@
           "votes": 9,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
-      ]
     }
   },
   "PATCH /api/comments/:comment_id": {
@@ -142,8 +148,7 @@
       "inc_votes": "newVote(any number to add or subtract to current votes)"
     },
     "exampleResponse": {
-      "comment": [
-        {
+      "comment": {
           "comment_id": 99,
           "body": "Text from the comment..",
           "article_id": 6,
@@ -151,7 +156,6 @@
           "votes": 9,
           "created_at": "2018-05-30T15:59:13.341Z"
         }
-      ]
     }
   },
   "DELETE /api/comments/:comment_id": {
