@@ -1,6 +1,6 @@
 const express = require("express");
 const { getAllApiUsers } = require("./controllers/users.controllers");
-const { getAllApiTopics } = require("./controllers/topics.controllers");
+const { getAllApiTopics, insertApiTopic } = require("./controllers/topics.controllers");
 const { getAllApiEndpoints } = require("./controllers/endpoints.controllers");
 const {
   getApiArticles,
@@ -27,7 +27,9 @@ app.use(express.json());
 app.get("/api", getAllApiEndpoints);
 
 // /api/topics
-app.get("/api/topics", getAllApiTopics);
+app.route("/api/topics")
+.get(getAllApiTopics)
+.post(insertApiTopic);
 
 // /api/articles
 app.get("/api/articles", getAllApiArticles);

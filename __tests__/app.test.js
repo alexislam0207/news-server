@@ -44,7 +44,46 @@ describe("GET /api/topics", () => {
       .then(({ body: { msg } }) => {
         expect(msg).toBe("path not found");
       });
-    });
+  });
+});
+
+describe("POST /api/topics", () => {
+  test("201: responds with the posted topic", () => {
+    const newTopic = {
+      slug: "dogs",
+      description: "Who doesn't love dogs",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body: { topic } }) => {
+        expect(topic).toHaveProperty("slug", newTopic.slug);
+        expect(topic).toHaveProperty("description", newTopic.description);
+      });
+  });
+  test("400: responds with bad request when passed an invalid new topic", () => {
+    const invalidTopic = { description: "Who doesn't love dogs" };
+    return request(app)
+      .post("/api/topics")
+      .send(invalidTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("400: responds with bad request when passed a slug that already exists", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        description: "Not dogs",
+        slug: "cats",
+      })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
 });
 
 // /api/articles
@@ -303,7 +342,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(comment).toHaveProperty("created_at", expect.any(String));
       });
   });
-  test("400: responds with bad request with passed a string as id", () => {
+  test("400: responds with bad request when passed a string as id", () => {
     return request(app)
       .post("/api/articles/two/comments")
       .send(newComment)
@@ -312,7 +351,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(msg).toBe("bad request");
       });
   });
-  test("400: responds with bad request with passed an invalid new comment", () => {
+  test("400: responds with bad request when passed an invalid new comment", () => {
     const invalidComment = { body: "Nice article" };
     return request(app)
       .post("/api/articles/2/comments")
@@ -322,7 +361,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(msg).toBe("bad request");
       });
   });
-  test("404: responds with not found with passed an id that does not exist", () => {
+  test("404: responds with not found when passed an id that does not exist", () => {
     return request(app)
       .post("/api/articles/100/comments")
       .send(newComment)
@@ -331,7 +370,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(msg).toBe("not found");
       });
   });
-  test("404: responds with not found with post with a username that does not exist", () => {
+  test("404: responds with not found when passed a username that does not exist", () => {
     return request(app)
       .post("/api/articles/2/comments")
       .send({
@@ -439,49 +478,49 @@ describe("GET /api/users/:username", () => {
 
 // /api/comments
 describe("PATCH /api/comments/:comment_id", () => {
-    const updateVote = { inc_votes: 1 };
-    test("201: responds with the updated comment", () => {
-      return request(app)
-        .patch("/api/comments/3")
-        .send(updateVote)
-        .expect(201)
-        .then(({ body: { comment } }) => {
-          expect(comment).toHaveProperty("comment_id", 3);
-          expect(comment).toHaveProperty("created_at", expect.any(String));
-          expect(comment).toHaveProperty("author", expect.any(String));
-          expect(comment).toHaveProperty("body", expect.any(String));
-          expect(comment).toHaveProperty("votes", expect.any(Number));
-          expect(comment).toHaveProperty("article_id", expect.any(Number));
-        });
-    });
-    test("400: responds with bad request with passed a string as id", () => {
-      return request(app)
-        .patch("/api/comments/three")
-        .send(updateVote)
-        .expect(400)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("bad request");
-        });
-    });
-    test("404: responds with not found with passed an id that does not exist", () => {
-      return request(app)
-        .patch("/api/comments/88")
-        .send(updateVote)
-        .expect(404)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("not found");
-        });
-    });
-    test("400: responds with bad request with passed an invalid request body", () => {
-      return request(app)
-        .patch("/api/articles/3")
-        .send({})
-        .expect(400)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("bad request");
-        });
-    });
+  const updateVote = { inc_votes: 1 };
+  test("201: responds with the updated comment", () => {
+    return request(app)
+      .patch("/api/comments/3")
+      .send(updateVote)
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        expect(comment).toHaveProperty("comment_id", 3);
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+        expect(comment).toHaveProperty("author", expect.any(String));
+        expect(comment).toHaveProperty("body", expect.any(String));
+        expect(comment).toHaveProperty("votes", expect.any(Number));
+        expect(comment).toHaveProperty("article_id", expect.any(Number));
+      });
   });
+  test("400: responds with bad request with passed a string as id", () => {
+    return request(app)
+      .patch("/api/comments/three")
+      .send(updateVote)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("404: responds with not found with passed an id that does not exist", () => {
+    return request(app)
+      .patch("/api/comments/88")
+      .send(updateVote)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+  test("400: responds with bad request with passed an invalid request body", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({})
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+});
 
 describe("DELETE /api/comments/:comment_id", () => {
   test("204: no respond body", () => {
