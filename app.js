@@ -1,22 +1,24 @@
 const express = require("express");
+const { getAllApiUsers } = require("./controllers/users.controllers");
+const { getAllApiTopics } = require("./controllers/topics.controllers");
+const { getAllApiEndpoints } = require("./controllers/endpoints.controllers");
 const {
-  pathNotFound,
-  getAllApiTopics,
-  getAllApiEndpoints,
   getApiArticles,
   getAllApiArticles,
+  updateApiArticle,
+} = require("./controllers/articles.controllers");
+const {
   getApiCommentsByArticleId,
   insertApiComment,
-  updateApiArticle,
   deleteApiComment,
-  getAllApiUsers,
   updateApiComment,
-} = require("./controllers/controllers");
+} = require("./controllers/comments.controllers");
 const {
   handleServerErrors,
   handlePsqlErrors,
   handleCustomErrors,
-} = require("./error");
+  pathNotFound
+} = require("./controllers/error");
 
 const app = express();
 app.use(express.json());
