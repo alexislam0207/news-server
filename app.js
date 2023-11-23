@@ -6,6 +6,7 @@ const {
   getApiArticles,
   getAllApiArticles,
   updateApiArticle,
+  deleteApiArticle,
 } = require("./controllers/articles.controllers");
 const {
   getApiCommentsByArticleId,
@@ -36,7 +37,8 @@ app.get("/api/articles", getAllApiArticles);
 app
   .route("/api/articles/:article_id")
   .get(getApiArticles)
-  .patch(updateApiArticle);
+  .patch(updateApiArticle)
+  .delete(deleteApiArticle);
 app
   .route("/api/articles/:article_id/comments")
   .get(getApiCommentsByArticleId)

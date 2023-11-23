@@ -3,6 +3,7 @@ const {
   getAllArticles,
   checkIfArticleIdExist,
   updateArticle,
+  deleteArticle,
 } = require("../models/articles.models");
 
 exports.getApiArticles = (req, res, next) => {
@@ -34,6 +35,15 @@ exports.updateApiArticle = (req, res, next) => {
   Promise.all(promises)
     .then((reslovedPromises) => {
       res.status(201).send({ article: reslovedPromises[0] });
+    })
+    .catch(next);
+};
+
+exports.deleteApiArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  deleteArticle(article_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };

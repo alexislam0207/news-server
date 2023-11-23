@@ -430,6 +430,30 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
+describe("DELETE /api/articles/:article_id", () => {
+  test.only("204: no respond body", () => {
+    return request(app)
+    .delete("/api/articles/6")
+    .expect(204);
+  });
+  test("400: responds with bad request with passed a string as id", () => {
+    return request(app)
+      .delete("/api/articles/six")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("404: responds with not found with passed an id that does not exist", () => {
+    return request(app)
+      .delete("/api/articles/199")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+});
+
 // /api/users
 describe("GET /api/users", () => {
   test("200: responds with an array of user objects", () => {
