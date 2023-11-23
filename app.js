@@ -19,22 +19,27 @@ const {
 } = require("./error");
 
 const app = express();
-
 app.use(express.json());
 
-app.get("/api/topics", getAllApiTopics);
+// /api
 app.get("/api", getAllApiEndpoints);
+
+// /api/topics
+app.get("/api/topics", getAllApiTopics);
+
+// /api/articles
 app.get("/api/articles/:article_id", getApiArticles);
 app.get("/api/articles", getAllApiArticles);
 app.get("/api/articles/:article_id/comments", getApiCommentsByArticleId);
+app.post("/api/articles/:article_id/comments", insertApiComment);
+app.patch("/api/articles/:article_id", updateApiArticle);
+
+// /api/users
 app.get("/api/users", getAllApiUsers);
 app.get("/api/users/:username", getAllApiUsers);
 
-app.post("/api/articles/:article_id/comments", insertApiComment);
-
-app.patch("/api/articles/:article_id", updateApiArticle);
+// /api/comments
 app.patch("/api/comments/:comment_id", updateApiComment);
-
 app.delete("/api/comments/:comment_id", deleteApiComment);
 
 app.all("*", pathNotFound);

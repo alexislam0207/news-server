@@ -16,18 +16,21 @@ exports.pathNotFound = (req, res) => {
   res.status(404).send({ msg: "path not found" });
 };
 
+// /api
+exports.getAllApiEndpoints = (req, res, next) => {
+    getAllEndpoints().then((endpoints) => {
+        res.status(200).send({ endpoints });
+    });
+};
+
+// /api/topics
 exports.getAllApiTopics = (req, res, next) => {
   getAllTopics().then((topics) => {
     res.status(200).send({ topics });
   });
 };
 
-exports.getAllApiEndpoints = (req, res, next) => {
-  getAllEndpoints().then((endpoints) => {
-    res.status(200).send({ endpoints });
-  });
-};
-
+// /api/articles
 exports.getApiArticles = (req, res, next) => {
   const { article_id } = req.params;
   getArticles(article_id)
@@ -87,6 +90,20 @@ exports.updateApiArticle = (req, res, next) => {
     .catch(next);
 };
 
+// users
+exports.getAllApiUsers = (req, res, next) => {
+  const { username } = req.params;
+  getAllUsers(username).then((users) => {
+    if (username) {
+      res.status(200).send({ user: users });
+    } else {
+      res.status(200).send({ users });
+    }
+  })
+  .catch(next);
+};
+
+// /api/comments
 exports.updateApiComment = (req, res, next) => {
   const { comment_id } = req.params;
   const updateVote = req.body;
@@ -104,25 +121,4 @@ exports.deleteApiComment = (req, res, next) => {
       res.status(204).send();
     })
     .catch(next);
-};
-
-exports.deleteApiComment = (req, res, next) => {
-  const { comment_id } = req.params;
-  deleteComment(comment_id)
-    .then(() => {
-      res.status(204).send();
-    })
-    .catch(next);
-};
-
-exports.getAllApiUsers = (req, res, next) => {
-  const { username } = req.params;
-  getAllUsers(username).then((users) => {
-    if (username) {
-      res.status(200).send({ user: users });
-    } else {
-      res.status(200).send({ users });
-    }
-  })
-  .catch(next);
 };

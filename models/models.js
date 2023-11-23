@@ -1,18 +1,21 @@
 const db = require("../db/connection");
 const fs = require("fs/promises");
 
-exports.getAllTopics = () => {
-  return db.query(`SELECT * FROM topics`).then(({ rows }) => {
-    return rows;
-  });
-};
-
+// /api
 exports.getAllEndpoints = () => {
   return fs.readFile(`${__dirname}/../endpoints.json`).then((res) => {
     return JSON.parse(res);
   });
 };
 
+// /api/topics
+exports.getAllTopics = () => {
+  return db.query(`SELECT * FROM topics`).then(({ rows }) => {
+    return rows;
+  });
+};
+
+// /api/articles
 exports.getArticles = (article_id) => {
   return db
     .query(
@@ -121,21 +124,6 @@ exports.insertComment = (article_id, newComment) => {
     });
 };
 
-exports.insertComment = (article_id, newComment) => {
-  const { username, body } = newComment;
-  return db
-    .query(
-      `
-    INSERT INTO comments(body, article_id, author)
-    VALUES ($1, $2, $3)
-    RETURNING *`,
-      [body, article_id, username]
-    )
-    .then(({ rows }) => {
-      return rows[0];
-    });
-};
-
 exports.updateArticle = (article_id, updateVote) => {
   return db
     .query(
@@ -151,6 +139,26 @@ exports.updateArticle = (article_id, updateVote) => {
     });
 };
 
+// /api/users
+exports.getAllUsers = (username) => {
+  let queryStr = `SELECT * FROM users `;
+  const queryValues = [];
+  if (username) {
+    queryStr += `WHERE username = $1`;
+    queryValues.push(username);
+  }
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    }
+    if (username) {
+      return rows[0];
+    }
+    return rows;
+  });
+};
+
+// /api/comments
 exports.updateComment = (comment_id, updateVote) => {
     return db
       .query(
@@ -183,22 +191,4 @@ exports.deleteComment = (comment_id) => {
         return Promise.reject({ status: 404, msg: "not found" });
       }
     });
-};
-
-exports.getAllUsers = (username) => {
-  let queryStr = `SELECT * FROM users `;
-  const queryValues = [];
-  if (username) {
-    queryStr += `WHERE username = $1`;
-    queryValues.push(username);
-  }
-  return db.query(queryStr, queryValues).then(({ rows }) => {
-    if (!rows.length) {
-      return Promise.reject({ status: 404, msg: "not found" });
-    }
-    if (username) {
-      return rows[0];
-    }
-    return rows;
-  });
 };

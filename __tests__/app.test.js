@@ -11,6 +11,19 @@ afterAll(() => {
 
 beforeEach(() => seed(testData));
 
+// /api
+describe("GET /api", () => {
+  test("200: responds with an object describing all the available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toEqual(endpointsData);
+      });
+  });
+});
+
+// /api/topics
 describe("GET /api/topics", () => {
   test("200: responds with all the topics with slug and description properties", () => {
     return request(app)
@@ -31,20 +44,10 @@ describe("GET /api/topics", () => {
       .then(({ body: { msg } }) => {
         expect(msg).toBe("path not found");
       });
-  });
+    });
 });
 
-describe("GET /api", () => {
-  test("200: responds with an object describing all the available endpoints", () => {
-    return request(app)
-      .get("/api")
-      .expect(200)
-      .then(({ body: { endpoints } }) => {
-        expect(endpoints).toEqual(endpointsData);
-      });
-  });
-});
-
+// /api/articles
 describe("GET /api/articles/:article_id", () => {
   test("200: responds with an articles choosen by id", () => {
     return request(app)
@@ -281,51 +284,6 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("GET /api/users", () => {
-  test("200: responds with an array of user objects", () => {
-    return request(app)
-      .get("/api/users")
-      .expect(200)
-      .then(({ body: { users } }) => {
-        expect(users.length).toBe(4);
-        users.forEach((user) => {
-          expect(user).toHaveProperty("username", expect.any(String));
-          expect(user).toHaveProperty("name", expect.any(String));
-          expect(user).toHaveProperty("avatar_url", expect.any(String));
-        });
-      });
-  });
-  test("404: responds with path not found when passed an incorrect path", () => {
-    return request(app)
-      .get("/api/user")
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("path not found");
-      });
-  });
-});
-
-describe("GET /api/users/:username", () => {
-  test("200: responds with a user choosen by username", () => {
-    return request(app)
-      .get("/api/users/icellusedkars")
-      .expect(200)
-      .then(({ body: { user } }) => {
-        expect(user).toHaveProperty("username", expect.any(String));
-        expect(user).toHaveProperty("name", expect.any(String));
-        expect(user).toHaveProperty("avatar_url", expect.any(String));
-      });
-  });
-  test("404: responds with not found with passed a nonexistent username", () => {
-    return request(app)
-      .get("/api/users/abc2")
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("not found");
-      });
-  });
-});
-
 describe("POST /api/articles/:article_id/comments", () => {
   const newComment = {
     username: "rogersop",
@@ -433,6 +391,53 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
+// /api/users
+describe("GET /api/users", () => {
+  test("200: responds with an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          expect(user).toHaveProperty("username", expect.any(String));
+          expect(user).toHaveProperty("name", expect.any(String));
+          expect(user).toHaveProperty("avatar_url", expect.any(String));
+        });
+      });
+  });
+  test("404: responds with path not found when passed an incorrect path", () => {
+    return request(app)
+      .get("/api/user")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("path not found");
+      });
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  test("200: responds with a user choosen by username", () => {
+    return request(app)
+      .get("/api/users/icellusedkars")
+      .expect(200)
+      .then(({ body: { user } }) => {
+        expect(user).toHaveProperty("username", expect.any(String));
+        expect(user).toHaveProperty("name", expect.any(String));
+        expect(user).toHaveProperty("avatar_url", expect.any(String));
+      });
+  });
+  test("404: responds with not found with passed a nonexistent username", () => {
+    return request(app)
+      .get("/api/users/abc2")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+});
+
+// /api/comments
 describe("PATCH /api/comments/:comment_id", () => {
     const updateVote = { inc_votes: 1 };
     test("201: responds with the updated comment", () => {
