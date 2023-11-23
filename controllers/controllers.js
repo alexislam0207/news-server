@@ -1,16 +1,18 @@
+const { getAllUsers } = require("../models/users.models");
+const { getAllTopics } = require("../models/topics.models");
+const { getAllEndpoints } = require("../models/endpoints.models");
 const {
-  getAllTopics,
-  getAllEndpoints,
   getArticles,
   getAllArticles,
-  getCommentsByArticeId,
   checkIfArticleIdExist,
-  insertComment,
   updateArticle,
-  deleteComment,
-  getAllUsers,
+} = require("../models/articles.models");
+const {
+  getCommentsByArticeId,
+  insertComment,
   updateComment,
-} = require("../models/models");
+  deleteComment,
+} = require("../models/comments.models");
 
 exports.pathNotFound = (req, res) => {
   res.status(404).send({ msg: "path not found" });
@@ -18,9 +20,9 @@ exports.pathNotFound = (req, res) => {
 
 // /api
 exports.getAllApiEndpoints = (req, res, next) => {
-    getAllEndpoints().then((endpoints) => {
-        res.status(200).send({ endpoints });
-    });
+  getAllEndpoints().then((endpoints) => {
+    res.status(200).send({ endpoints });
+  });
 };
 
 // /api/topics
@@ -41,7 +43,7 @@ exports.getApiArticles = (req, res, next) => {
 };
 
 exports.getAllApiArticles = (req, res, next) => {
-  const { topic , sort_by, order} = req.query;
+  const { topic, sort_by, order } = req.query;
   getAllArticles(topic, sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
@@ -93,14 +95,15 @@ exports.updateApiArticle = (req, res, next) => {
 // users
 exports.getAllApiUsers = (req, res, next) => {
   const { username } = req.params;
-  getAllUsers(username).then((users) => {
-    if (username) {
-      res.status(200).send({ user: users });
-    } else {
-      res.status(200).send({ users });
-    }
-  })
-  .catch(next);
+  getAllUsers(username)
+    .then((users) => {
+      if (username) {
+        res.status(200).send({ user: users });
+      } else {
+        res.status(200).send({ users });
+      }
+    })
+    .catch(next);
 };
 
 // /api/comments
