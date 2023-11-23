@@ -28,19 +28,25 @@ app.get("/api", getAllApiEndpoints);
 app.get("/api/topics", getAllApiTopics);
 
 // /api/articles
-app.get("/api/articles/:article_id", getApiArticles);
 app.get("/api/articles", getAllApiArticles);
-app.get("/api/articles/:article_id/comments", getApiCommentsByArticleId);
-app.post("/api/articles/:article_id/comments", insertApiComment);
-app.patch("/api/articles/:article_id", updateApiArticle);
+app
+  .route("/api/articles/:article_id")
+  .get(getApiArticles)
+  .patch(updateApiArticle);
+app
+  .route("/api/articles/:article_id/comments")
+  .get(getApiCommentsByArticleId)
+  .post(insertApiComment);
 
 // /api/users
 app.get("/api/users", getAllApiUsers);
 app.get("/api/users/:username", getAllApiUsers);
 
 // /api/comments
-app.patch("/api/comments/:comment_id", updateApiComment);
-app.delete("/api/comments/:comment_id", deleteApiComment);
+app
+  .route("/api/comments/:comment_id")
+  .patch(updateApiComment)
+  .delete(deleteApiComment);
 
 app.all("*", pathNotFound);
 
