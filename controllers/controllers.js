@@ -9,6 +9,7 @@ const {
   updateArticle,
   deleteComment,
   getAllUsers,
+  updateComment,
 } = require("../models/models");
 
 exports.pathNotFound = (req, res) => {
@@ -37,7 +38,8 @@ exports.getApiArticles = (req, res, next) => {
 };
 
 exports.getAllApiArticles = (req, res, next) => {
-  getAllArticles()
+  const { topic , sort_by, order} = req.query;
+  getAllArticles(topic, sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
     })
@@ -85,6 +87,16 @@ exports.updateApiArticle = (req, res, next) => {
     .catch(next);
 };
 
+exports.updateApiComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  const updateVote = req.body;
+  updateComment(comment_id, updateVote)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
 exports.deleteApiComment = (req, res, next) => {
   const { comment_id } = req.params;
   deleteComment(comment_id)
@@ -104,7 +116,13 @@ exports.deleteApiComment = (req, res, next) => {
 };
 
 exports.getAllApiUsers = (req, res, next) => {
-  getAllUsers().then((users) => {
-    res.status(200).send({ users });
-  });
+  const { username } = req.params;
+  getAllUsers(username).then((users) => {
+    if (username) {
+      res.status(200).send({ user: users });
+    } else {
+      res.status(200).send({ users });
+    }
+  })
+  .catch(next);
 };

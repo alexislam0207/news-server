@@ -10,6 +10,7 @@ const {
   updateApiArticle,
   deleteApiComment,
   getAllApiUsers,
+  updateApiComment,
 } = require("./controllers/controllers");
 const {
   handleServerErrors,
@@ -27,10 +28,12 @@ app.get("/api/articles/:article_id", getApiArticles);
 app.get("/api/articles", getAllApiArticles);
 app.get("/api/articles/:article_id/comments", getApiCommentsByArticleId);
 app.get("/api/users", getAllApiUsers);
+app.get("/api/users/:username", getAllApiUsers);
 
 app.post("/api/articles/:article_id/comments", insertApiComment);
 
 app.patch("/api/articles/:article_id", updateApiArticle);
+app.patch("/api/comments/:comment_id", updateApiComment);
 
 app.delete("/api/comments/:comment_id", deleteApiComment);
 

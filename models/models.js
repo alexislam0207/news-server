@@ -33,19 +33,49 @@ exports.getArticles = (article_id) => {
     });
 };
 
-exports.getAllArticles = () => {
-  return db
-    .query(
-      `
-    SELECT a.title, a.author, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, COUNT(c.comment_id) AS comment_count 
+exports.getAllArticles = (topic, sort_by = "created_at", order = "desc") => {
+  const acceptedSortByValues = [
+    "articles_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    "article_img_url",
+  ];
+  const acceptedOrderValues = ["asc", "desc"];
+
+  if (
+    !acceptedOrderValues.includes(order) ||
+    !acceptedSortByValues.includes(sort_by)
+  ) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+
+  let queryStr = `SELECT a.title, a.author, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url, COUNT(c.comment_id) AS comment_count 
     FROM articles AS a LEFT JOIN comments AS c 
-    ON a.article_id=c.article_id 
-    GROUP BY a.article_id
-    ORDER BY a.created_at DESC;`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+    ON a.article_id=c.article_id `;
+
+  const queryValues = [];
+
+  if (topic) {
+    queryStr += `WHERE topic = $1 `;
+    queryValues.push(topic);
+  }
+
+  queryStr += `GROUP BY a.article_id
+    ORDER BY a.${sort_by} ${order.toUpperCase()};`;
+
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    if (parseInt(topic) && !rows.length) {
+      return Promise.reject({ status: 400, msg: "bad request" });
+    }
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    }
+    return rows;
+  });
 };
 
 exports.getCommentsByArticeId = (article_id) => {
@@ -121,6 +151,24 @@ exports.updateArticle = (article_id, updateVote) => {
     });
 };
 
+exports.updateComment = (comment_id, updateVote) => {
+    return db
+      .query(
+        `
+      UPDATE comments
+      SET votes = votes + $1
+      WHERE comment_id = $2
+      RETURNING *`,
+        [updateVote.inc_votes, comment_id]
+      )
+      .then(({ rows }) => {
+        if(!rows.length){
+            return Promise.reject({ status: 404, msg: "not found" })
+        }
+        return rows[0];
+      });
+  };
+
 exports.deleteComment = (comment_id) => {
   return db
     .query(
@@ -137,13 +185,20 @@ exports.deleteComment = (comment_id) => {
     });
 };
 
-exports.getAllUsers = () => {
-  return db
-    .query(
-      `
-      SELECT * FROM users`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.getAllUsers = (username) => {
+  let queryStr = `SELECT * FROM users `;
+  const queryValues = [];
+  if (username) {
+    queryStr += `WHERE username = $1`;
+    queryValues.push(username);
+  }
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    }
+    if (username) {
+      return rows[0];
+    }
+    return rows;
+  });
 };
