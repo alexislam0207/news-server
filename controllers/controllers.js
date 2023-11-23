@@ -105,7 +105,13 @@ exports.deleteApiComment = (req, res, next) => {
 };
 
 exports.getAllApiUsers = (req, res, next) => {
-  getAllUsers().then((users) => {
-    res.status(200).send({ users });
-  });
+  const { username } = req.params;
+  getAllUsers(username).then((users) => {
+    if (username) {
+      res.status(200).send({ user: users });
+    } else {
+      res.status(200).send({ users });
+    }
+  })
+  .catch(next);
 };
