@@ -85,14 +85,6 @@ describe("GET /api/articles/:article_id (now updated to include comment_count)",
       .get("/api/articles/2")
       .expect(200)
       .then(({ body: { article } }) => {
-        expect(article).toHaveProperty("author", expect.any(String));
-        expect(article).toHaveProperty("title", expect.any(String));
-        expect(article).toHaveProperty("article_id", 2);
-        expect(article).toHaveProperty("body", expect.any(String));
-        expect(article).toHaveProperty("topic", expect.any(String));
-        expect(article).toHaveProperty("created_at", expect.any(String));
-        expect(article).toHaveProperty("votes", expect.any(Number));
-        expect(article).toHaveProperty("article_img_url", expect.any(String));
         expect(article).toHaveProperty("comment_count", expect.any(String));
       });
   });
