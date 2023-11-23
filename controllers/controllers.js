@@ -9,6 +9,7 @@ const {
   updateArticle,
   deleteComment,
   getAllUsers,
+  updateComment,
 } = require("../models/models");
 
 exports.pathNotFound = (req, res) => {
@@ -82,6 +83,16 @@ exports.updateApiArticle = (req, res, next) => {
   Promise.all(promises)
     .then((reslovedPromises) => {
       res.status(201).send({ article: reslovedPromises[0] });
+    })
+    .catch(next);
+};
+
+exports.updateApiComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  const updateVote = req.body;
+  updateComment(comment_id, updateVote)
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch(next);
 };
