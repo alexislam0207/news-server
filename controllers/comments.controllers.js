@@ -8,7 +8,8 @@ const { checkIfArticleIdExist } = require("../models/articles.models");
 
 exports.getApiCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-  const promises = [getCommentsByArticeId(article_id)];
+  const { limit, p } = req.query;
+  const promises = [getCommentsByArticeId(article_id, limit, p)];
 
   if (article_id) {
     promises.push(checkIfArticleIdExist(article_id));

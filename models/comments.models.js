@@ -1,13 +1,25 @@
 const db = require("../db/connection");
 
-exports.getCommentsByArticeId = (article_id) => {
+exports.getCommentsByArticeId = (article_id, limit = 10, p = 1) => {
   return db
     .query(
       `
-    SELECT * FROM comments 
-    WHERE article_id = $1`,
+  SELECT * FROM comments 
+  WHERE article_id = $1`,
       [article_id]
     )
+    .then(({ rows }) => {
+      if (limit * (p - 1) > rows.length) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+      return db.query(
+        `
+    SELECT * FROM comments 
+    WHERE article_id = $1 
+    LIMIT $2 OFFSET $3`,
+        [article_id, limit, limit * (p - 1)]
+      );
+    })
     .then(({ rows }) => {
       return rows;
     });

@@ -348,10 +348,10 @@ describe("GET /api/articles (limit and p queries)", () => {
 describe("GET /api/articles/:article_id/comments", () => {
   test("200: responds with an array of comments for the given article_id", () => {
     return request(app)
-      .get("/api/articles/9/comments")
+      .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body: { comments } }) => {
-        expect(comments.length).toBe(2);
+        expect(comments.length).toBe(10);
         comments.forEach((comment) => {
           expect(comment).toHaveProperty("comment_id", expect.any(Number));
           expect(comment).toHaveProperty("votes", expect.any(Number));
@@ -381,6 +381,65 @@ describe("GET /api/articles/:article_id/comments", () => {
   test("404: responds with not found with passed a nonexistent number id", () => {
     return request(app)
       .get("/api/articles/100/comments")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments (limit and p queries)", () => {
+  test("200: responds with an array of comments according to limit", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(5);
+        comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(comment).toHaveProperty("votes", expect.any(Number));
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+          expect(comment).toHaveProperty("author", expect.any(String));
+          expect(comment).toHaveProperty("body", expect.any(String));
+          expect(comment).toHaveProperty("article_id", expect.any(Number));
+        });
+      });
+  });
+  test("200: responds with an array of comments according to limit and p", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=3&p=2")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(3);
+        comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(comment).toHaveProperty("votes", expect.any(Number));
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+          expect(comment).toHaveProperty("author", expect.any(String));
+          expect(comment).toHaveProperty("body", expect.any(String));
+          expect(comment).toHaveProperty("article_id", expect.any(Number));
+        });
+      });
+  });
+  test("400: responds with bad request when passed invalid limit queries", () => {
+    return request(app)
+      .get("/api/articles/9/comments?limit=ten")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("400: responds with bad request when passed invalid p queries", () => {
+    return request(app)
+      .get("/api/articles/6/comments?limit=12&p=two")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("404: responds with not found when gone pass the existing comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10&p=99")
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("not found");
