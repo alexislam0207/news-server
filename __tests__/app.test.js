@@ -154,7 +154,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
           expect(article).toHaveProperty("author", expect.any(String));
@@ -184,7 +184,7 @@ describe("GET /api/articles (topic query)", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(12);
+        expect(articles.length).toBe(10);
         articles.forEach((article) => {
           expect(article).toHaveProperty("author", expect.any(String));
           expect(article).toHaveProperty("title", expect.any(String));
@@ -221,7 +221,7 @@ describe("GET /api/articles (sorting queries)", () => {
       .get("/api/articles?sort_by=votes")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("votes", { descending: true });
         articles.forEach((article) => {
           expect(article).toHaveProperty("author", expect.any(String));
@@ -240,7 +240,7 @@ describe("GET /api/articles (sorting queries)", () => {
       .get("/api/articles?sort_by=title&order=asc")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("title");
         articles.forEach((article) => {
           expect(article).toHaveProperty("author", expect.any(String));
@@ -276,6 +276,71 @@ describe("GET /api/articles (sorting queries)", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("bad request");
+      });
+  });
+});
+
+describe("GET /api/articles (limit and p queries)", () => {
+  test("200: responds with an array of articles according to limit", () => {
+    return request(app)
+      .get("/api/articles?limit=5")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("article_id", expect.any(Number));
+          expect(article).toHaveProperty("comment_count", expect.any(String));
+          expect(article).toHaveProperty("topic", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
+          expect(article).toHaveProperty("votes", expect.any(Number));
+          expect(article).toHaveProperty("article_img_url", expect.any(String));
+        });
+      });
+  });
+  test("200: responds with an array of articles according to limit and p", () => {
+    return request(app)
+      .get("/api/articles?limit=6&p=2")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(6);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("article_id", expect.any(Number));
+          expect(article).toHaveProperty("comment_count", expect.any(String));
+          expect(article).toHaveProperty("topic", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
+          expect(article).toHaveProperty("votes", expect.any(Number));
+          expect(article).toHaveProperty("article_img_url", expect.any(String));
+        });
+      });
+  });
+  test("400: responds with bad request when passed invalid limit queries", () => {
+    return request(app)
+      .get("/api/articles?limit=ten")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("400: responds with bad request when passed invalid p queries", () => {
+    return request(app)
+      .get("/api/articles?limit=12&p=two")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("404: responds with not found when gone pass the existing articles", () => {
+    return request(app)
+      .get("/api/articles?limit=10&p=99")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
       });
   });
 });

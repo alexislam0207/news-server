@@ -20,7 +20,13 @@ exports.getArticles = (article_id) => {
     });
 };
 
-exports.getAllArticles = (topic, sort_by = "created_at", order = "desc") => {
+exports.getAllArticles = (
+  topic,
+  sort_by = "created_at",
+  order = "desc",
+  limit = 10,
+  p = 1
+) => {
   const acceptedSortByValues = [
     "articles_id",
     "title",
@@ -45,14 +51,20 @@ exports.getAllArticles = (topic, sort_by = "created_at", order = "desc") => {
       ON a.article_id=c.article_id `;
 
   const queryValues = [];
+  let index = 1;
 
   if (topic) {
     queryStr += `WHERE topic = $1 `;
     queryValues.push(topic);
+    index++;
   }
 
   queryStr += `GROUP BY a.article_id
-      ORDER BY a.${sort_by} ${order.toUpperCase()};`;
+      ORDER BY a.${sort_by} ${order.toUpperCase()} 
+      LIMIT $${index} OFFSET $${index + 1}`;
+
+  queryValues.push(limit);
+  queryValues.push(limit * (p - 1));
 
   return db.query(queryStr, queryValues).then(({ rows }) => {
     if (parseInt(topic) && !rows.length) {
