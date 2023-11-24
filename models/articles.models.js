@@ -80,6 +80,42 @@ exports.checkIfArticleIdExist = (article_id) => {
     });
 };
 
+exports.insertArticle = (newArticle) => {
+  const { author, title, body, topic, article_img_url } = newArticle;
+
+  let queryStr = `
+  INSERT INTO articles (author, title, body, topic) 
+  VALUES ($1, $2, $3, $4) 
+  RETURNING *`;
+  const queryValues = [author, title, body, topic];
+
+  if (article_img_url) {
+    queryStr = `
+  INSERT INTO articles (author, title, body, topic, article_img_url) 
+  VALUES ($1, $2, $3, $4, $5) 
+  RETURNING *`;
+    queryValues.push(article_img_url);
+  }
+
+  return db
+    .query(queryStr, queryValues)
+    .then(({ rows }) => {
+      return db.query(
+        `
+    SELECT a.article_id, a.title, a.author, a.body, a.topic, a.created_at, a.votes, a.article_img_url, COUNT(c.comment_id) AS comment_count 
+    FROM articles AS a LEFT JOIN comments AS c 
+    ON a.article_id=c.article_id 
+    WHERE a.article_id = $1 
+    GROUP BY a.article_id
+  `,
+        [rows[0].article_id]
+      );
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
 exports.updateArticle = (article_id, updateVote) => {
   return db
     .query(

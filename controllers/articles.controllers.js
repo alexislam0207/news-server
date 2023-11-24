@@ -4,6 +4,7 @@ const {
   checkIfArticleIdExist,
   updateArticle,
   deleteArticle,
+  insertArticle,
 } = require("../models/articles.models");
 
 exports.getApiArticles = (req, res, next) => {
@@ -20,6 +21,15 @@ exports.getAllApiArticles = (req, res, next) => {
   getAllArticles(topic, sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.insertApiArticle = (req, res, next) => {
+  const newArticle = req.body;
+  insertArticle(newArticle)
+    .then((article) => {
+      res.status(201).send({ article });
     })
     .catch(next);
 };

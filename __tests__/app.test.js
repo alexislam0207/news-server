@@ -384,6 +384,84 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("POST /api/articles", () => {
+  test("201: responds with the posted article when post without article_img_url", () => {
+    const newArticle = {
+      author: "rogersop",
+      body: "article",
+      title: "title",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article).toHaveProperty("article_id", expect.any(Number));
+        expect(article).toHaveProperty("votes", 0);
+        expect(article).toHaveProperty("created_at", expect.any(String));
+        expect(article).toHaveProperty("comment_count", expect.any(String));
+        expect(article).toHaveProperty("body", newArticle.body);
+        expect(article).toHaveProperty("author", newArticle.author);
+        expect(article).toHaveProperty("title", newArticle.title);
+        expect(article).toHaveProperty("topic", newArticle.topic);
+        expect(article).toHaveProperty("article_img_url", expect.any(String));
+      });
+  });
+  test("201: responds with the posted article when post with article_img_url", () => {
+    const newArticle = {
+      author: "rogersop",
+      body: "article",
+      title: "title",
+      topic: "cats",
+      article_img_url: "an URL",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article).toHaveProperty("article_id", expect.any(Number));
+        expect(article).toHaveProperty("votes", 0);
+        expect(article).toHaveProperty("created_at", expect.any(String));
+        expect(article).toHaveProperty("comment_count", expect.any(String));
+        expect(article).toHaveProperty("body", newArticle.body);
+        expect(article).toHaveProperty("author", newArticle.author);
+        expect(article).toHaveProperty("title", newArticle.title);
+        expect(article).toHaveProperty("topic", newArticle.topic);
+        expect(article).toHaveProperty(
+          "article_img_url",
+          newArticle.article_img_url
+        );
+      });
+  });
+  test("400: responds with bad request when passed an incomplete new article", () => {
+    const incompleteArticle = { body: "article" };
+    return request(app)
+      .post("/api/articles")
+      .send(incompleteArticle)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("404: responds with not found when passed a author that does not exist", () => {
+    const newArticle = {
+      author: "alexis",
+      body: "article",
+      title: "title",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+});
+
 describe("PATCH /api/articles/:article_id", () => {
   const updateVote = { inc_votes: 1 };
   test("201: responds with the updated article", () => {
@@ -431,10 +509,8 @@ describe("PATCH /api/articles/:article_id", () => {
 });
 
 describe("DELETE /api/articles/:article_id", () => {
-  test.only("204: no respond body", () => {
-    return request(app)
-    .delete("/api/articles/6")
-    .expect(204);
+  test("204: no respond body", () => {
+    return request(app).delete("/api/articles/6").expect(204);
   });
   test("400: responds with bad request with passed a string as id", () => {
     return request(app)

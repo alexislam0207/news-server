@@ -1,12 +1,16 @@
 const express = require("express");
 const { getAllApiUsers } = require("./controllers/users.controllers");
-const { getAllApiTopics, insertApiTopic } = require("./controllers/topics.controllers");
+const {
+  getAllApiTopics,
+  insertApiTopic,
+} = require("./controllers/topics.controllers");
 const { getAllApiEndpoints } = require("./controllers/endpoints.controllers");
 const {
   getApiArticles,
   getAllApiArticles,
   updateApiArticle,
   deleteApiArticle,
+  insertApiArticle,
 } = require("./controllers/articles.controllers");
 const {
   getApiCommentsByArticleId,
@@ -18,7 +22,7 @@ const {
   handleServerErrors,
   handlePsqlErrors,
   handleCustomErrors,
-  pathNotFound
+  pathNotFound,
 } = require("./controllers/error");
 
 const app = express();
@@ -28,12 +32,13 @@ app.use(express.json());
 app.get("/api", getAllApiEndpoints);
 
 // /api/topics
-app.route("/api/topics")
-.get(getAllApiTopics)
-.post(insertApiTopic);
+app.route("/api/topics").get(getAllApiTopics).post(insertApiTopic);
 
 // /api/articles
-app.get("/api/articles", getAllApiArticles);
+app
+.route("/api/articles")
+.get(getAllApiArticles)
+.post(insertApiArticle);
 app
   .route("/api/articles/:article_id")
   .get(getApiArticles)
