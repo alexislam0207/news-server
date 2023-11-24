@@ -1,63 +1,25 @@
 const express = require("express");
-const { getAllApiUsers } = require("./controllers/users.controllers");
-const {
-  getAllApiTopics,
-  insertApiTopic,
-} = require("./controllers/topics.controllers");
 const { getAllApiEndpoints } = require("./controllers/endpoints.controllers");
-const {
-  getApiArticles,
-  getAllApiArticles,
-  updateApiArticle,
-  deleteApiArticle,
-  insertApiArticle,
-} = require("./controllers/articles.controllers");
-const {
-  getApiCommentsByArticleId,
-  insertApiComment,
-  deleteApiComment,
-  updateApiComment,
-} = require("./controllers/comments.controllers");
 const {
   handleServerErrors,
   handlePsqlErrors,
   handleCustomErrors,
   pathNotFound,
 } = require("./controllers/error");
+const topicsRoute = require("./routes/topics.routes");
+const usersRoute = require("./routes/users.routes");
+const articlesRoute = require("./routes/articles.routes");
+const commentsRoute = require("./routes/comments.routes");
 
 const app = express();
 app.use(express.json());
 
-// /api
+app.use("/api/topics", topicsRoute);
+app.use("/api/users", usersRoute);
+app.use("/api/articles", articlesRoute);
+app.use("/api/comments", commentsRoute);
+
 app.get("/api", getAllApiEndpoints);
-
-// /api/topics
-app.route("/api/topics").get(getAllApiTopics).post(insertApiTopic);
-
-// /api/articles
-app
-.route("/api/articles")
-.get(getAllApiArticles)
-.post(insertApiArticle);
-app
-  .route("/api/articles/:article_id")
-  .get(getApiArticles)
-  .patch(updateApiArticle)
-  .delete(deleteApiArticle);
-app
-  .route("/api/articles/:article_id/comments")
-  .get(getApiCommentsByArticleId)
-  .post(insertApiComment);
-
-// /api/users
-app.get("/api/users", getAllApiUsers);
-app.get("/api/users/:username", getAllApiUsers);
-
-// /api/comments
-app
-  .route("/api/comments/:comment_id")
-  .patch(updateApiComment)
-  .delete(deleteApiComment);
 
 app.all("*", pathNotFound);
 
