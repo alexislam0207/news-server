@@ -16,6 +16,7 @@ exports.getCommentsByArticeId = (article_id, limit = 10, p = 1) => {
         `
     SELECT * FROM comments 
     WHERE article_id = $1 
+    ORDER BY created_at DESC 
     LIMIT $2 OFFSET $3`,
         [article_id, limit, limit * (p - 1)]
       );
