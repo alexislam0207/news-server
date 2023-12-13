@@ -36,6 +36,7 @@ exports.getAllArticles = (
     "created_at",
     "votes",
     "article_img_url",
+    "comment_count",
   ];
   const acceptedOrderValues = ["asc", "desc"];
 
@@ -59,8 +60,13 @@ exports.getAllArticles = (
     index++;
   }
 
+  let sort_byStr = sort_by;
+  if (sort_by !== "comment_count") {
+    sort_byStr = "a." + sort_by;
+  }
+
   queryStr += `GROUP BY a.article_id
-      ORDER BY a.${sort_by} ${order.toUpperCase()} 
+      ORDER BY ${sort_byStr} ${order.toUpperCase()} 
       LIMIT $${index} OFFSET $${index + 1}`;
 
   queryValues.push(limit);
