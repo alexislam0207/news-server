@@ -1,7 +1,7 @@
 # Alexis(Northcoders) News API
 
 ## Link to hosted API
-https://alexis-news-server.onrender.com
+https://alexis-news-server.onrender.com/api/
 
 ## Project Summary
 A news application featuring articles posted by members of our community, with topics (on live version) including coding, football and cooking!
