@@ -3,6 +3,7 @@
 ## Link to hosted API
 https://alexis-news-server.onrender.com/api/
 
+\* This is hosted on a free service and it might take a few minutes to load initially. Thank you for your patient.
 ## Project Summary
 A news application featuring articles posted by members of our community, with topics (on live version) including coding, football and cooking!
 
